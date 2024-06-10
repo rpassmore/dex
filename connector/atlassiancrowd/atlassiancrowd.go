@@ -202,13 +202,21 @@ func (c *crowdConnector) crowdAPIClient() *http.Client {
 // authenticateWithPassword creates a new session for user and validates a password with Crowd API
 func (c *crowdConnector) authenticateWithPassword(ctx context.Context, client *http.Client, username string, password string) (invalidPass bool, err error) {
 	req, err := c.crowdUserManagementRequest(ctx,
-		"POST",
-		"/session",
+		"GET",
+		fmt.Sprintf("/authentication?username=%s", username),
 		struct {
-			Username string `json:"username"`
-			Password string `json:"password"`
-		}{Username: username, Password: password},
+			Password string `json:password`
+		}{Password: password},
 	)
+
+	//req, err := c.crowdUserManagementRequest(ctx,
+	//	"POST",
+	//	"/session",
+	//	struct {
+	//		Username string `json:"username"`
+	//		Password string `json:"password"`
+	//	}{Username: username, Password: password},
+	//)
 	if err != nil {
 		return false, fmt.Errorf("crowd: new auth pass api request %v", err)
 	}
